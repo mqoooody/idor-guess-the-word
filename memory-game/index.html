@@ -43,6 +43,7 @@ h1{
   font-size:26px; line-height:1.15; color:var(--gold-deep); font-weight:700;
 }
 .titles .sub{font-size:14px; margin-top:2px}
+.lvtag{display:inline-block; margin-top:4px; padding:1px 12px; border-radius:20px; background:rgba(184,145,58,.2); color:var(--gold-deep); font-size:12px}
 .titles .en{font-size:11px; letter-spacing:.04em; color:var(--gold-deep); opacity:.9; direction:ltr}
 
 /* hud */
@@ -61,8 +62,8 @@ h1{
 /* board */
 .board-wrap{display:grid; place-items:center}
 .board{
-  width:max(290px, min(100%, 480px, calc(100svh - 340px)));
-  aspect-ratio:1; display:grid; grid-template-columns:repeat(5,1fr); grid-template-rows:repeat(5,1fr);
+  width:max(290px, min(100%, 480px, calc((100svh - 340px) * var(--cols, 5) / var(--rows, 5))));
+  aspect-ratio:calc(var(--cols, 5) / var(--rows, 5)); display:grid; grid-template-columns:repeat(var(--cols, 5),1fr); grid-template-rows:repeat(var(--rows, 5),1fr);
   gap:clamp(4px,1.4vw,8px); padding:clamp(6px,2vw,10px); direction:ltr;
   background:linear-gradient(145deg,#E6D3A4,#D2B873); border-radius:18px;
   box-shadow:0 10px 26px rgba(90,64,12,.2), inset 0 0 0 1.5px rgba(122,90,18,.4);
@@ -135,7 +136,7 @@ h1{
 }
 .overlay.show{display:grid}
 .sheet{
-  width:min(100%,390px); background:var(--ivory); border-radius:20px; padding:22px 20px 20px;
+  width:min(100%,390px); max-height:94svh; overflow:auto; background:var(--ivory); border-radius:20px; padding:22px 20px 20px;
   border:1px solid var(--gold); box-shadow:0 12px 36px rgba(40,28,6,.35);
   text-align:center;
 }
@@ -145,6 +146,14 @@ h1{
 .logos img{height:76px; max-width:46%; object-fit:contain; background:#fff; border-radius:10px; padding:4px; border:1px solid rgba(184,145,58,.5)}
 .rules{text-align:center; margin:8px 0 14px}
 .rules p{margin:6px 0; font-size:14.5px; line-height:1.7}
+.lvlabel{font-size:13px; color:var(--gold-deep); margin-top:2px}
+.levels{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:6px 0 8px}
+.lv{font:inherit; font-size:15px; min-height:44px; border-radius:12px; border:1px solid var(--gold); background:var(--ivory); color:var(--ink); cursor:pointer}
+.lv small{display:block; font-size:11px; font-weight:400; opacity:.8}
+.lv{line-height:1.25; padding:4px 2px}
+.lv.on{background:#CDA94F; border-color:var(--gold-deep); color:#2B2110; font-weight:700}
+.lv:focus-visible{outline:3px solid var(--gold-deep); outline-offset:2px}
+.btn.ghost{background:transparent}
 .sheet ul{list-style:none; margin:12px 0 16px; padding:0; text-align:start; font-size:14.5px; line-height:1.65}
 .sheet li{padding:7px 0; border-top:1px solid rgba(184,145,58,.35)}
 .sheet li:first-child{border-top:0}
@@ -180,6 +189,7 @@ h1{
       <h1 data-i18n="title">لعبة الذاكرة</h1>
       <div class="sub" data-i18n="subtitle">اليوم العالمي للأشعة</div>
       <div class="en">International Day of Radiology</div>
+      <div class="lvtag" id="lvTag"></div>
     </div>
     <label class="logo-slot" id="slotIDOR">
       <input type="file" accept="image/*" aria-label="IDOR logo">
@@ -209,14 +219,15 @@ h1{
 
 <script>
 /* ============ إعدادات اللعبة – عدّلها حسب الحاجة ============ */
-const CFG = {
-  TIME: 120,          // مدة اللعبة بالثواني
-  MAX_MISTAKES: 15,   // الحد الأقصى للأخطاء
-  HINT_COST: 8,       // ثواني تُخصم عند استخدام التلميح
-  HINT_MS: 1500,      // مدة كشف البطاقات عند التلميح
-  FLIP_BACK_MS: 850,  // مدة بقاء البطاقتين المختلفتين مكشوفتين
-  CENTER: 12          // موضع بطاقة الشعار في المنتصف (٥×٥)
+/* المستويات: عدّل الأرقام هنا بسهولة
+   COLS×ROWS = عدد المربعات، PAIRS = عدد الأزواج، CENTER = موضع بطاقة الشعار (null = بدون) */
+const LEVELS = {
+  easy:   { COLS: 4, ROWS: 4, PAIRS: 8,  CENTER: null, TIME: 120, MAX_MISTAKES: 15, HINTS: 2, HINT_COST: 5,  FLIP_BACK_MS: 1000 },
+  medium: { COLS: 5, ROWS: 4, PAIRS: 10, CENTER: null, TIME: 100, MAX_MISTAKES: 12, HINTS: 2, HINT_COST: 6,  FLIP_BACK_MS: 850 },
+  hard:   { COLS: 5, ROWS: 5, PAIRS: 12, CENTER: 12,   TIME: 90,  MAX_MISTAKES: 10, HINTS: 1, HINT_COST: 10, FLIP_BACK_MS: 700 }
 };
+let level = 'medium';
+const CFG = Object.assign({ HINT_MS: 1500 }, LEVELS[level]);
 
 /* ============ الترجمة ============ */
 const L = {
@@ -224,13 +235,14 @@ const L = {
     title:'لعبة الذاكرة', subtitle:'اليوم العالمي للأشعة',
     logoNGHA:'شعار الحرس الوطني', logoIDOR:'شعار IDOR',
     time:'الوقت', mistakes:'الأخطاء', pairs:'الأزواج',
-    hint:'تلميح', restart:'إعادة', langBtn:'English', hintUsed:'تم استخدام التلميح',
+    hint:'تلميح', restart:'إعادة', langBtn:'English', hintUsed:'لا توجد تلميحات',
+    lv_easy:'سهل', lv_medium:'متوسط', lv_hard:'صعب', chooseLevel:'اختر المستوى', changeLevel:'تغيير المستوى', levelWord:'المستوى',
     idle:'اقلب بطاقتين وطابق صور العظام المتشابهة.',
     startTitle:'طابق صور العظام', start:'ابدأ',
     rules:[
       n=>`اقلب بطاقتين في كل دور وطابق الصور المتشابهة.`,
-      n=>`الفوز: مطابقة ${n.pairs} زوجاً خلال ${n.time}.`,
-      n=>`الخسارة: انتهاء الوقت أو ${n.mist} خطأً. ولك تلميح واحد يخصم ${n.hint} ثوانٍ.`
+      n=>`الفوز: مطابقة ${n.pairs} ${n.pw} (${n.cards} بطاقة) خلال ${n.time}.`,
+      n=>`الخسارة: انتهاء الوقت أو ${n.mist} ${n.mw}. التلميحات: ${n.hints}، وكل تلميح يخصم ${n.hint} ثوانٍ.`
     ],
     winTitle:'مبروك، فزت', loseTitle:'انتهت اللعبة',
     loseTime:'انتهى الوقت قبل مطابقة كل الأزواج.', loseMiss:'وصلت إلى الحد الأقصى للأخطاء.',
@@ -244,13 +256,14 @@ const L = {
     title:'Memory Game', subtitle:'International Day of Radiology',
     logoNGHA:'NGHA logo', logoIDOR:'IDOR logo',
     time:'Time', mistakes:'Mistakes', pairs:'Pairs',
-    hint:'Hint', restart:'Restart', langBtn:'العربية', hintUsed:'Hint used',
+    hint:'Hint', restart:'Restart', langBtn:'العربية', hintUsed:'No hints left',
+    lv_easy:'Easy', lv_medium:'Medium', lv_hard:'Hard', chooseLevel:'Choose a level', changeLevel:'Change level', levelWord:'Level',
     idle:'Flip two cards and match the identical bone images.',
     startTitle:'Match the bone images', start:'Start',
     rules:[
       n=>`Flip two cards each turn and match identical images.`,
-      n=>`Win: match all ${n.pairs} pairs within ${n.time}.`,
-      n=>`Lose: time runs out or you make ${n.mist} mistakes. You get one hint, which costs ${n.hint} seconds.`
+      n=>`Win: match all ${n.pairs} pairs (${n.cards} cards) within ${n.time}.`,
+      n=>`Lose: time runs out or you make ${n.mist} mistakes. Hints: ${n.hints}, each costs ${n.hint} seconds.`
     ],
     winTitle:'Congratulations, you won', loseTitle:'Game over',
     loseTime:'Time ran out before all pairs were matched.', loseMiss:'You reached the maximum number of mistakes.',
@@ -664,7 +677,7 @@ const STAR = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3
 /* ============ الحالة ============ */
 let lang = 'ar';
 let deck = [], first = null, second = null, lock = true, matched = 0, mistakes = 0;
-let started = false, over = false, hintUsed = false, endAt = 0, timer = null, finalTimeLeft = 0;
+let started = false, over = false, hintsLeft = CFG.HINTS, endAt = 0, timer = null, finalTimeLeft = 0;
 let overlayState = { mode:'start' };
 let toastState = { kind:'idle' };
 
@@ -679,9 +692,11 @@ const timeWords = s => lang === 'ar' ? `${dig(Math.floor(s/60))}:${dig(String(s%
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
 function buildBoard(){
-  const cards = shuffle(BONES.flatMap(b => [b.id, b.id]));
+  const cards = shuffle(shuffle(BONES.slice()).slice(0, CFG.PAIRS).flatMap(b => [b.id, b.id]));
+  const total = CFG.COLS * CFG.ROWS;
   deck = [];
-  for (let i = 0, c = 0; i < 25; i++) deck.push(i === CFG.CENTER ? null : cards[c++]);
+  for (let i = 0, c = 0; i < total; i++) deck.push(i === CFG.CENTER ? null : cards[c++]);
+  board.style.setProperty('--cols', CFG.COLS); board.style.setProperty('--rows', CFG.ROWS);
   board.innerHTML = '';
   deck.forEach((id, i) => {
     if (id === null) {
@@ -732,7 +747,7 @@ function onMatch(){
   matched++; first = second = null;
   toastState = { kind:'fact', id: bone.id };
   renderHud(); renderToast();
-  if (matched === BONES.length) { setTimeout(() => endGame(true), 650); return; }
+  if (matched === CFG.PAIRS) { setTimeout(() => endGame(true), 650); return; }
   setTimeout(() => { lock = false; }, 300);
 }
 
@@ -751,9 +766,9 @@ function onMiss(){
 }
 
 function useHint(){
-  if (lock || over || hintUsed) return;
+  if (lock || over || hintsLeft <= 0) return;
   if (!started) startTimer();
-  hintUsed = true; lock = true;
+  hintsLeft--; lock = true;
   endAt -= CFG.HINT_COST * 1000;
   document.querySelectorAll('.card:not(.matched):not(.flipped)').forEach(c => c.classList.add('peek'));
   renderHud();
@@ -781,9 +796,10 @@ function renderHud(){
   $('#timeBar').style.width = (left / CFG.TIME * 100) + '%';
   $('#timeChip').classList.toggle('low', started && left <= 20);
   $('#missVal').textContent = `${dig(mistakes)} / ${dig(CFG.MAX_MISTAKES)}`;
-  $('#pairVal').textContent = `${dig(matched)} / ${dig(BONES.length)}`;
-  $('#hintBtn').disabled = hintUsed || over;
-  $('#hintBtn').textContent = hintUsed ? tr('hintUsed') : `${tr('hint')} (${dig(1)})`;
+  $('#pairVal').textContent = `${dig(matched)} / ${dig(CFG.PAIRS)}`;
+  $('#hintBtn').disabled = hintsLeft <= 0 || over;
+  $('#hintBtn').textContent = hintsLeft <= 0 ? tr('hintUsed') : `${tr('hint')} (${dig(hintsLeft)})`;
+  $('#lvTag').textContent = tr('lv_' + level);
 }
 
 function renderToast(){
@@ -812,26 +828,31 @@ function renderOverlay(){
   const ov = $('#overlay'), sh = $('#sheet'), s = overlayState;
   if (s.mode === 'none') { ov.classList.remove('show'); return; }
   ov.classList.add('show');
-  const nums = { pairs: dig(BONES.length), time: timeWords(CFG.TIME), mist: dig(CFG.MAX_MISTAKES), hint: dig(CFG.HINT_COST) };
+  const nums = { pairs: dig(CFG.PAIRS), cards: dig(CFG.PAIRS * 2), pw: lang === 'ar' ? (CFG.PAIRS >= 11 ? 'زوجاً' : 'أزواج') : 'pairs', time: timeWords(CFG.TIME), mist: dig(CFG.MAX_MISTAKES), mw: CFG.MAX_MISTAKES <= 10 ? 'أخطاء' : 'خطأً', hint: dig(CFG.HINT_COST), hints: dig(CFG.HINTS) };
   if (s.mode === 'start') {
     const lg = sel => { const sl = $(sel); return sl && sl.classList.contains('has') ? sl.querySelector('img').src : ''; };
     const logos = [lg('#slotIDOR'), lg('#slotNGHA')].filter(Boolean).map(u => `<img src="${u}" alt="">`).join('');
     sh.innerHTML = `${logos ? `<div class="logos">${logos}</div>` : ''}<h2>${tr('startTitle')}</h2>
+      <div class="lvlabel">${tr('chooseLevel')}</div>
+      <div class="levels">${['easy','medium','hard'].map(k => `<button type="button" class="lv${k === level ? ' on' : ''}" data-lv="${k}">${tr('lv_' + k)}<small>${dig(LEVELS[k].PAIRS * 2)} ${lang === 'ar' ? 'بطاقة' : 'cards'}</small></button>`).join('')}</div>
       <div class="rules">${L[lang].rules.map(r => `<p>${r(nums)}</p>`).join('')}</div>
       <button class="btn primary" id="goBtn" type="button">${tr('start')}</button>`;
+    sh.querySelectorAll('.lv').forEach(b => b.onclick = () => { level = b.dataset.lv; Object.assign(CFG, LEVELS[level]); hintsLeft = CFG.HINTS; first = second = null; buildBoard(); renderHud(); renderOverlay(); });
     $('#goBtn').onclick = () => { overlayState = { mode:'none' }; renderOverlay(); lock = false; };
   } else if (s.mode === 'win') {
     const used = CFG.TIME - s.left;
-    sh.innerHTML = `<h2>${tr('winTitle')}</h2><p><strong>${L[lang].ratings[s.stars - 1]}</strong></p>
+    sh.innerHTML = `<h2>${tr('winTitle')}</h2><p><strong>${L[lang].ratings[s.stars - 1]}</strong> · ${tr('levelWord')}: ${tr('lv_' + level)}</p>
       <div class="stats"><div>${tr('timeUsed')}<b>${mmss(Math.max(0, used))}</b></div><div>${tr('missLabel')}<b>${dig(s.mistakes)} / ${dig(CFG.MAX_MISTAKES)}</b></div></div>
       <p class="didyou">${tr('didyou')}</p>
-      <button class="btn primary" id="againBtn" type="button">${tr('again')}</button>`;
-    $('#againBtn').onclick = newGame; $('#againBtn').focus();
+      <button class="btn primary" id="againBtn" type="button">${tr('again')}</button>
+      <button class="btn ghost" id="lvBtn" type="button">${tr('changeLevel')}</button>`;
+    $('#againBtn').onclick = newGame; $('#lvBtn').onclick = toStart; $('#againBtn').focus();
   } else if (s.mode === 'lose') {
-    sh.innerHTML = `<h2>${tr('loseTitle')}</h2><p>${s.reason === 'time' ? tr('loseTime') : tr('loseMiss')}</p>
-      <div class="stats"><div>${tr('pairsLabel')}<b>${dig(s.matched)} / ${dig(BONES.length)}</b></div><div>${tr('missLabel')}<b>${dig(s.mistakes)} / ${dig(CFG.MAX_MISTAKES)}</b></div></div>
-      <button class="btn primary" id="againBtn" type="button">${tr('retry')}</button>`;
-    $('#againBtn').onclick = newGame; $('#againBtn').focus();
+    sh.innerHTML = `<h2>${tr('loseTitle')}</h2><p>${s.reason === 'time' ? tr('loseTime') : tr('loseMiss')}</p><p>${tr('levelWord')}: <strong>${tr('lv_' + level)}</strong></p>
+      <div class="stats"><div>${tr('pairsLabel')}<b>${dig(s.matched)} / ${dig(CFG.PAIRS)}</b></div><div>${tr('missLabel')}<b>${dig(s.mistakes)} / ${dig(CFG.MAX_MISTAKES)}</b></div></div>
+      <button class="btn primary" id="againBtn" type="button">${tr('retry')}</button>
+      <button class="btn ghost" id="lvBtn" type="button">${tr('changeLevel')}</button>`;
+    $('#againBtn').onclick = newGame; $('#lvBtn').onclick = toStart; $('#againBtn').focus();
   }
 }
 
@@ -840,7 +861,7 @@ function endGame(win, reason){
   over = true; lock = true; clearInterval(timer);
   const left = remaining();
   if (win) {
-    const st = (mistakes <= 5 && left >= 45) ? 3 : (mistakes <= 10 ? 2 : 1);
+    const st = (mistakes <= CFG.MAX_MISTAKES * .33 && left >= CFG.TIME * .35) ? 3 : (mistakes <= CFG.MAX_MISTAKES * .66 ? 2 : 1);
     overlayState = { mode:'win', stars: st, left, mistakes };
   } else {
     overlayState = { mode:'lose', reason, matched, mistakes };
@@ -862,9 +883,11 @@ function confetti(){
   }
 }
 
+function toStart(){ newGame(); overlayState = { mode:'start' }; lock = true; renderOverlay(); }
+
 function newGame(){
   clearInterval(timer);
-  first = second = null; matched = 0; mistakes = 0; started = false; over = false; hintUsed = false;
+  first = second = null; matched = 0; mistakes = 0; started = false; over = false; hintsLeft = CFG.HINTS;
   lock = true; toastState = { kind:'idle' };
   overlayState = { mode:'none' };
   buildBoard(); renderHud(); renderToast(); renderOverlay();
@@ -902,7 +925,7 @@ bindLogo('#slotIDOR', setCenterLogo);
 
 /* ============ تشغيل ============ */
 $('#hintBtn').addEventListener('click', useHint);
-$('#restartBtn').addEventListener('click', () => { newGame(); overlayState = { mode:'start' }; lock = true; renderOverlay(); });
+$('#restartBtn').addEventListener('click', toStart);
 $('#langBtn').addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); });
 
 document.body.insertAdjacentHTML('afterbegin', DEFS);
