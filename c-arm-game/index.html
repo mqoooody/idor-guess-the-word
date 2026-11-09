@@ -274,7 +274,7 @@ body.arcade .arc-ctl{display:grid}
 
   <div class="hud" id="hud">
     <div class="hud-score"><span>النقاط</span><b id="hudScore">0</b></div>
-    <div class="hud-time"><div class="bar"><i id="timeBar"></i></div><b id="hudTime">40</b><span class="time-pop" id="timePop"></span></div>
+    <div class="hud-time"><div class="bar"><i id="timeBar"></i></div><b id="hudTime">45</b><span class="time-pop" id="timePop"></span></div>
     <div class="hud-combo" id="hudCombo"><b>×1</b><span>كومبو</span></div>
   </div>
 
@@ -347,7 +347,7 @@ body.arcade .arc-ctl{display:grid}
     </div>
     <div class="start-wrap">
       <button class="btn-start" id="btnArcade" type="button" disabled>جاري التحميل…</button>
-      <small id="menuBest">40 ثانية · كل لقطة تزيد وقتك</small>
+      <small id="menuBest">45 ثانية · كل لقطة تزيد وقتك</small>
     </div>
     <div class="lb-head"><b>لوحة الأبطال</b><span>على هذا الجهاز</span></div>
     <ol class="lb" id="lbMenu"></ol>
@@ -1116,13 +1116,13 @@ function lbHTML(a,me){if(!a.length)return'<li class="empty">ما فيه نتائ
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function renderMenuLB(){$('#lbMenu').innerHTML=lbHTML(loadLB(),-1);
   let b=0;try{b=+localStorage.getItem('carm-arcade-best')||0;}catch(e){}
-  $('#menuBest').textContent=b?`أفضل نتيجة على هذا الجهاز: ${nf(b)}`:'40 ثانية · كل لقطة تزيد وقتك';}
+  $('#menuBest').textContent=b?`أفضل نتيجة على هذا الجهاز: ${nf(b)}`:'45 ثانية · كل لقطة تزيد وقتك';}
 
-function difficulty(){const l=AR.level;AR.tolF=Math.max(.12,.25-.022*l);AR.magnet=l<2?2.8:l<4?1.9:1.25;AR.lockT=l<3?.38:.5;AR.zTol=Math.max(5,14-2*l);}
+function difficulty(){const l=AR.level;AR.tolF=Math.max(.16,.3-.02*l);AR.magnet=l<3?3.4:l<5?2.6:2;AR.lockT=l<3?.3:.4;AR.zTol=Math.max(8,16-2*l);}
 function startArcade(){
   if(!MODEL.ready)return;aud();
   document.body.classList.add('arcade');$('#menu').hidden=true;$('#result').hidden=true;
-  Object.assign(AR,{on:true,ended:false,score:0,combo:0,bestCombo:0,hits:0,level:0,time:40,lock:0,pause:0,count:2.4,last:[],times:[],album:[],
+  Object.assign(AR,{on:true,ended:false,score:0,combo:0,bestCombo:0,hits:0,level:0,time:45,lock:0,pause:0,count:2.4,last:[],times:[],album:[],
     tick:0,blip:0,lowSec:99,rx:1e9,ry:0,rz:0,lastR:0,heat:0,t:null});
   difficulty();S.playing=true;S.fluoro=true;S.hasImage=false;S.collide=0;S.A=0;S.proj='ap';AR.seenLat=false;
   S.X=rnd(55,110);S.Y=rnd(-6,6);S.Z=Math.round(minZ(S.X,S.Y,'f')+14);syncProjUI();syncUI();
@@ -1158,7 +1158,7 @@ function pop(big,small,cls=''){const p=document.createElement('div');p.className
 
 function hit(now){
   const t=AR.t,el=(now-AR.tStart)/1000;
-  AR.combo=el<=5?AR.combo+1:1;AR.bestCombo=Math.max(AR.bestCombo,AR.combo);
+  AR.combo=el<=6?AR.combo+1:1;AR.bestCombo=Math.max(AR.bestCombo,AR.combo);
   const low=t.view!=='lat'&&S.Z<=t.zt+3,mult=setCombo(true),speed=Math.max(0,Math.round(150-el*30)),pts=(100+speed+t.bonus+(low?50:0))*mult;
   AR.score+=pts;AR.hits++;AR.times.push(el);
   const tb=Math.max(1.2,3.6-.3*AR.level)+(el<2?1:0);AR.time+=tb;
@@ -1230,15 +1230,19 @@ function arcadeTick(dt,now){
     const sec=Math.ceil(AR.time);if(AR.time<5.5&&sec!==AR.lowSec){AR.lowSec=sec;tone(1000,.07,'square',.05);}
     const lat=t.view==='lat',okV=(S.proj==='lat')===lat,tol=AR.tol;
     const d=lat?Math.hypot(S.X-t.tx,S.Z-t.hObj):Math.hypot(S.X-t.tx,S.Y-t.ty),high=!lat&&S.Z>t.zt+AR.zTol;
-    if(okV&&!padDrag&&!monDrag&&!AR.hgtHeld&&d<tol*AR.magnet&&d>.05){const k=Math.min(1,dt*5);
-      if(lat){setPos(S.X+(t.tx-S.X)*k,S.Y);S.Z+=(t.hObj-S.Z)*k;syncUI();}else setPos(S.X+(t.tx-S.X)*k,S.Y+(t.ty-S.Y)*k);}
+    const near=lat?Math.abs(S.X-t.tx)<tol*AR.magnet:d<tol*AR.magnet;
+    if(okV&&!padDrag&&!monDrag&&!AR.hgtHeld&&near){const k=Math.min(1,dt*5);
+      if(lat){setPos(S.X+(t.tx-S.X)*k,S.Y);S.Z+=(t.hObj-S.Z)*k;}
+      else{setPos(S.X+(t.tx-S.X)*k,S.Y+(t.ty-S.Y)*k);if(S.Z>t.zt+1)S.Z+=(t.zt-S.Z)*k*.8;}
+      syncUI();}
     AR.heat=okV?clamp(1-(d-tol)/(t.fov*3.2),0,1):0;
     AR.state=!okV?'view':d<=tol*1.02?(high?'high':'lock'):'far';
     if(AR.state==='lock'){AR.lock+=dt/AR.lockT;AR.blip+=dt;if(AR.blip>.08){AR.blip=0;tone(500+AR.lock*800,.05,'square',.035);}}
     else AR.lock=Math.max(0,AR.lock-dt*2.5);
     if(AR.lock>=1){hit(now);}
     else{AR.tick+=dt*(.7+AR.heat*AR.heat*15);if(AR.tick>=1){AR.tick=0;noiseHit(.03+AR.heat*.06,.012);}}
-    if((now-AR.tStart)/1000>4.5){AR.hint=true;
+    const wait=(now-AR.tStart)/1000;$('#vLAT').classList.toggle('nudge',AR.state==='view'&&lat);$('#vAP').classList.toggle('nudge',AR.state==='view'&&!lat);
+    if(wait>3){AR.hint=true;
       $('#vLAT').classList.toggle('nudge',AR.state==='view'&&lat);$('#vAP').classList.toggle('nudge',AR.state==='view'&&!lat);
       $('#hDn').classList.toggle('nudge',AR.state==='high'||(lat&&okV&&S.Z>t.hObj+tol));$('#hUp').classList.toggle('nudge',lat&&okV&&S.Z<t.hObj-tol);}
   }
@@ -1248,7 +1252,7 @@ function arcadeTick(dt,now){
 }
 let hudAcc=0;
 function updHud(){
-  const tm=AR.time;$('#hudTime').textContent=Math.ceil(tm);$('#timeBar').style.transform=`scaleX(${clamp(tm/40,0,1)})`;
+  const tm=AR.time;$('#hudTime').textContent=Math.ceil(tm);$('#timeBar').style.transform=`scaleX(${clamp(tm/45,0,1)})`;
   $('#hud').classList.toggle('low',tm<5.5&&AR.count<=0);
   const h=$('#heat');
   let lbl,col;
