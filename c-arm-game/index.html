@@ -138,6 +138,10 @@ button:focus-visible,canvas:focus-visible{outline:2px solid var(--accent);outlin
 .tip b{color:var(--accent)}
 .res-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
 .tbl-wrap{overflow-x:auto}
+.lang{display:flex;justify-content:flex-end;gap:4px;margin:-4px 0 10px}
+.lang button{border:1px solid var(--line);background:var(--bg2);color:var(--muted);border-radius:999px;padding:6px 14px;font-weight:600;font-size:.85rem}
+.lang button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+[dir="ltr"] .hud-time .bar i{transform-origin:left center}
 .credit{margin:16px 0 0;font-size:.72rem;color:var(--muted)}.credit a{color:var(--accent)}
 
 @media (min-width:700px){
@@ -176,13 +180,14 @@ body.arcade .hud{display:grid}
 @keyframes bump{0%{transform:scale(1.9)}100%{transform:scale(1)}}
 .target,.heat,.count{display:none}
 body.arcade .target{display:flex}body.arcade .heat:not([hidden]),body.arcade .count:not([hidden]){display:block}
-.target{position:absolute;top:8px;left:50%;transform:translateX(-50%);flex-direction:column;align-items:center;background:rgba(8,18,19,.86);
+.tgt-col{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;max-width:calc(100% - 20px)}
+.target{flex-direction:column;align-items:center;background:rgba(8,18,19,.86);
   border:1.5px solid var(--accent);border-radius:12px;padding:3px 16px 5px;pointer-events:none;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.45)}
 .target span{font-size:.68rem;color:var(--accent);letter-spacing:.02em}
 .target b{font-family:var(--f-display);font-size:clamp(1.1rem,5vw,1.45rem);font-weight:700;line-height:1.2}
 .target.new{animation:tgtIn .5s cubic-bezier(.2,1.6,.4,1)}
-@keyframes tgtIn{0%{transform:translateX(-50%) scale(.3);opacity:0}100%{transform:translateX(-50%) scale(1);opacity:1}}
-.heat{position:absolute;top:12px;right:10px;font-size:.78rem;font-weight:600;padding:2px 10px;border-radius:999px;pointer-events:none;background:rgba(0,0,0,.65);border:1px solid}
+@keyframes tgtIn{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+.heat{white-space:nowrap;font-size:.78rem;font-weight:600;padding:2px 10px;border-radius:999px;pointer-events:none;background:rgba(0,0,0,.65);border:1px solid}
 .count{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;font-family:var(--f-display);font-weight:700;font-size:clamp(4rem,22vw,8rem);color:var(--xray);text-shadow:0 4px 30px rgba(0,0,0,.8)}
 body.arcade .count:not([hidden]){display:grid}
 .count.go{animation:cgo .45s ease-out forwards}
@@ -261,37 +266,37 @@ body.arcade .arc-ctl{display:grid}
   <header class="top">
     <div class="brand">
       <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M28 6 A15 15 0 1 0 28 34" fill="none" stroke="#56c2ac" stroke-width="5" stroke-linecap="round"/><rect x="22" y="2" width="12" height="7" rx="2" fill="#e4eeeb"/><rect x="22" y="31" width="12" height="7" rx="2" fill="#e4eeeb"/><path d="M28 10 L28 30" stroke="#f4b63f" stroke-width="2" stroke-dasharray="2 3"/></svg>
-      <div><h1 id="taskTitle">تحدي الـ C-arm</h1><small id="taskBrief">غرفة العمليات · الأشعة التداخلية</small></div>
+      <div><h1 id="taskTitle" data-i="title">تحدي الـ C-arm</h1><small id="taskBrief" data-i="brandSub">غرفة العمليات · الأشعة التداخلية</small></div>
     </div>
     <div class="stats">
-      <div class="stat" id="stFT"><span>زمن الأشعة</span><b id="vFT">0.0 ث</b></div>
-      <div class="stat"><span>الجرعة</span><b id="vDose">0.00 mGy</b></div>
-      <div class="stat"><span>الوقت</span><b id="vTime">0:00</b></div>
+      <div class="stat" id="stFT"><span data-i="ft">زمن الأشعة</span><b id="vFT">0.0 ث</b></div>
+      <div class="stat"><span data-i="dose">الجرعة</span><b id="vDose">0.00 mGy</b></div>
+      <div class="stat"><span data-i="time">الوقت</span><b id="vTime">0:00</b></div>
     </div>
-    <button class="ghost icon-btn" id="btnSound" type="button" aria-pressed="true" aria-label="الصوت"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path class="w" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="x" d="M16 9l5 6M21 9l-5 6"/></svg></button>
-    <button class="ghost" id="btnMenu" type="button">القائمة</button>
+    <button class="ghost icon-btn" id="btnSound" type="button" aria-pressed="true" aria-label="الصوت" data-ia="sound"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path class="w" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="x" d="M16 9l5 6M21 9l-5 6"/></svg></button>
+    <button class="ghost" id="btnMenu" type="button" data-i="menu">القائمة</button>
   </header>
 
   <div class="hud" id="hud">
-    <div class="hud-score"><span>النقاط</span><b id="hudScore">0</b></div>
+    <div class="hud-score"><span data-i="score">النقاط</span><b id="hudScore">0</b></div>
     <div class="hud-time"><div class="bar"><i id="timeBar"></i></div><b id="hudTime">45</b><span class="time-pop" id="timePop"></span></div>
     <div class="hud-combo" id="hudCombo"><b>×1</b><span>كومبو</span></div>
   </div>
 
   <main class="stage">
-    <section class="scene-wrap" aria-label="غرفة العمليات">
+    <section class="scene-wrap" aria-label="غرفة العمليات" data-ia="or">
       <canvas id="scene"></canvas>
-      <div class="collide" id="collide" hidden>الكاشف بيصطدم بالمريض!</div>
+      <div class="collide" id="collide" hidden data-i="collide">الكاشف بيصطدم بالمريض!</div>
     </section>
 
     <section class="mon-col">
       <div class="monitor" id="monitor">
-        <canvas id="mon" aria-label="شاشة الأشعة، اسحب لتحريك الجهاز"></canvas>
-        <div class="ref"><canvas id="ref" width="200" height="200"></canvas><span>المطلوب</span></div>
-        <div class="drag-tip" id="dragTip"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>اسحب الصورة للضبط الدقيق</div>
+        <canvas id="mon" aria-label="شاشة الأشعة، اسحب لتحريك الجهاز" data-ia="monA"></canvas>
+        <div class="ref"><canvas id="ref" width="200" height="200"></canvas><span data-i="target">المطلوب</span></div>
+        <div class="drag-tip" id="dragTip"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span data-i="dragTip">اسحب الصورة للضبط الدقيق</span></div>
         <div class="toast" id="toast" hidden></div>
-        <div class="target" id="tgt"><span>صوّر</span><b id="tgtName"></b><em id="tgtView">AP</em></div>
-        <div class="heat" id="heat" hidden></div>
+        <div class="tgt-col"><div class="target" id="tgt"><span data-i="shoot">صوّر</span><b id="tgtName"></b><em id="tgtView">AP</em></div>
+        <div class="heat" id="heat" hidden></div></div>
         <div class="flash" id="flash"></div>
         <div class="pops" id="pops"></div>
         <div class="count" id="count" hidden></div>
@@ -299,26 +304,26 @@ body.arcade .arc-ctl{display:grid}
       </div>
     </section>
 
-    <section class="deck" aria-label="أدوات التحكم">
+    <section class="deck" aria-label="أدوات التحكم" data-ia="controls">
       <div>
-        <div class="deck-label"><b>حرّك الجهاز</b><span>اسحب الدائرة فوق الجزء المطلوب</span></div>
-        <canvas id="pad" tabindex="0" aria-label="منظر علوي للطاولة، اسحب لتحريك الجهاز"></canvas>
+        <div class="deck-label"><b data-i="moveT">حرّك الجهاز</b><span data-i="moveH">اسحب الدائرة فوق الجزء المطلوب</span></div>
+        <canvas id="pad" tabindex="0" aria-label="منظر علوي للطاولة، اسحب لتحريك الجهاز" data-ia="padA"></canvas>
       </div>
       <div class="arc-ctl">
-        <div class="seg" role="group" aria-label="اتجاه الأشعة">
-          <button type="button" id="vAP" class="on" aria-pressed="true">AP<small>من فوق</small></button>
-          <button type="button" id="vLAT" aria-pressed="false">لاترل<small>من الجنب</small></button>
+        <div class="seg" role="group" aria-label="اتجاه الأشعة" data-ia="beamDir">
+          <button type="button" id="vAP" class="on" aria-pressed="true">AP<small data-i="fromAbove">من فوق</small></button>
+          <button type="button" id="vLAT" aria-pressed="false">Lateral<small data-i="fromSide">من الجنب</small></button>
         </div>
         <div class="hgt">
-          <button class="rk" id="hUp" type="button" data-k="Z" data-s="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>ارفع</button>
+          <button class="rk" id="hUp" type="button" data-k="Z" data-s="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i="up">ارفع</span></button>
           <output id="hOut">0<small>سم</small></output>
-          <button class="rk" id="hDn" type="button" data-k="Z" data-s="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>نزّل</button>
+          <button class="rk" id="hDn" type="button" data-k="Z" data-s="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i="down">نزّل</span></button>
         </div>
       </div>
       <div class="drive">
         <div class="rocker">
-          <div class="rk-head"><span>الارتفاع</span><output id="oZ"></output></div>
-          <button class="rk" type="button" data-k="Z" data-s="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>ارفع</button>
+          <div class="rk-head"><span data-i="height">الارتفاع</span><output id="oZ"></output></div>
+          <button class="rk" type="button" data-k="Z" data-s="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i="up">ارفع</span></button>
           <button class="rk" type="button" data-k="Z" data-s="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>نزّل</button>
         </div>
         <button class="fluoro" id="btnFluoro" type="button" aria-pressed="false">
@@ -326,14 +331,14 @@ body.arcade .arc-ctl{display:grid}
           <b id="fluoroLbl">أشعة</b><small id="fluoroSub">اضغط للتشغيل</small>
         </button>
         <div class="rocker">
-          <div class="rk-head"><span>الميلان</span><output id="oA"></output></div>
-          <button class="rk" type="button" data-k="A" data-s="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6H4V2M4.6 6.2A9 9 0 1 1 3 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>للرأس <small>Cr</small></button>
-          <button class="rk" type="button" data-k="A" data-s="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h4V2M19.4 6.2A9 9 0 1 0 21 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>للقدم <small>Ca</small></button>
+          <div class="rk-head"><span data-i="tilt">الميلان</span><output id="oA"></output></div>
+          <button class="rk" type="button" data-k="A" data-s="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6H4V2M4.6 6.2A9 9 0 1 1 3 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i="toHead">للرأس</span> <small>Cr</small></button>
+          <button class="rk" type="button" data-k="A" data-s="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h4V2M19.4 6.2A9 9 0 1 0 21 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i="toFeet">للقدم</span> <small>Ca</small></button>
         </div>
       </div>
       <div class="act-row">
-        <button class="btn btn-hint" id="btnHint" type="button">تلميح<em id="hintCount">−50</em></button>
-        <button class="btn btn-primary" id="btnCapture" type="button">التقاط الصورة</button>
+        <button class="btn btn-hint" id="btnHint" type="button"><span data-i="hint">تلميح</span><em id="hintCount">−50</em></button>
+        <button class="btn btn-primary" id="btnCapture" type="button" data-i="capture">التقاط الصورة</button>
       </div>
     </section>
   </main>
@@ -341,26 +346,27 @@ body.arcade .arc-ctl{display:grid}
 
 <div class="overlay" id="menu" dir="rtl">
   <div class="sheet">
+    <div class="lang" role="group" aria-label="اللغة / Language"><button type="button" data-lang="ar" lang="ar">العربية</button><button type="button" data-lang="en" lang="en">English</button></div>
     <div class="hero">
-      <h2>أنت أخصائي الأشعة. <span>المريض على الطاولة.</span></h2>
-      <p>اسحب جهاز الـ C-arm فوق الجزء المطلوب. أول ما يتوسّط الشاشة تنلقط الصورة لحالها. كل لقطة سريعة تعطيك وقت إضافي وتكبّر الكومبو.</p>
+      <h2 data-i="heroH">أنت أخصائي الأشعة. <span>المريض على الطاولة.</span></h2>
+      <p data-i="heroP">اسحب جهاز الـ C-arm فوق الجزء المطلوب. أول ما يتوسّط الشاشة تنلقط الصورة لحالها. كل لقطة سريعة تعطيك وقت إضافي وتكبّر الكومبو.</p>
     </div>
     <div class="start-wrap">
       <button class="btn-start" id="btnArcade" type="button" disabled>جاري التحميل…</button>
       <small id="menuBest">45 ثانية · كل لقطة تزيد وقتك</small>
     </div>
-    <div class="lb-head"><b>لوحة الأبطال</b><span>على هذا الجهاز</span></div>
+    <div class="lb-head"><b data-i="lb">لوحة الأبطال</b><span data-i="device">على هذا الجهاز</span></div>
     <ol class="lb" id="lbMenu"></ol>
-    <details class="practice"><summary>وضع التدريب الدقيق (ارتفاع وميلان وجرعة)</summary>
+    <details class="practice"><summary data-i="practice">وضع التدريب الدقيق (ارتفاع وميلان وجرعة)</summary>
     <ol class="howto">
-      <li>اسحب الدائرة فوق الجزء</li>
-      <li>شغّل الأشعة وشوف الشاشة</li>
-      <li>اضبط الارتفاع والميلان</li>
-      <li>طابق «المطلوب» والتقط</li>
+      <li data-i="how1">اسحب الدائرة فوق الجزء</li>
+      <li data-i="how2">شغّل الأشعة وشوف الشاشة</li>
+      <li data-i="how3">اضبط الارتفاع والميلان</li>
+      <li data-i="how4">طابق «المطلوب» والتقط</li>
     </ol>
     <div class="cards" id="cards"></div>
     </details>
-    <p class="credit">نموذج العظام ثلاثي الأبعاد: <a href="https://lifesciencedb.jp/bp3d/" target="_blank" rel="noopener">BodyParts3D</a> © The Database Center for Life Science، برخصة <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener">CC BY-SA 2.1 JP</a>. تم تبسيط النموذج وتغيير وضعية الساق واليدين.</p>
+    <p class="credit" data-i="credit">نموذج العظام ثلاثي الأبعاد: <a href="https://lifesciencedb.jp/bp3d/" target="_blank" rel="noopener">BodyParts3D</a> © The Database Center for Life Science، برخصة <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener">CC BY-SA 2.1 JP</a>. تم تبسيط النموذج وتغيير وضعية الساق واليدين.</p>
   </div>
 </div>
 
@@ -646,19 +652,50 @@ function setupTasks(){
   TASKS.forEach(t=>t.zt=minZ(t.tx,t.ty,t.pose)+2);
 }
 
+/* ---------- language (Arabic / English) ---------- */
+let LANG='ar';try{LANG=localStorage.getItem('carm-lang')==='en'?'en':'ar';}catch(e){}
+const L=(a,e)=>LANG==='en'?e:a;
+const EN={title:'C-arm Challenge',brandSub:'Operating room · Interventional radiology',ft:'Fluoro time',dose:'Dose',time:'Time',menu:'Menu',score:'Score',
+  collide:'The detector is about to hit the patient!',target:'Target',dragTip:'Drag the image to fine-tune',shoot:'Shoot',moveT:'Move the C-arm',
+  moveH:'Drag the circle over the target',fromAbove:'From above',fromSide:'From the side',up:'Up',down:'Down',height:'Height',tilt:'Tilt',toHead:'Head',toFeet:'Feet',
+  hint:'Hint',capture:'Take image',heroH:'You are the radiology specialist. <span>The patient is on the table.</span>',
+  heroP:'Drag the C-arm over the target. The image is taken automatically once it is centered. Every fast shot gives you extra time and builds your combo.',
+  lb:'Leaderboard',device:'On this device',practice:'Precision practice (height, tilt and dose)',how1:'Drag the circle over the part',how2:'Turn on the X-ray and watch the screen',
+  how3:'Set the height and tilt',how4:'Match the target and capture',
+  credit:'3D bone model: <a href="https://lifesciencedb.jp/bp3d/" target="_blank" rel="noopener">BodyParts3D</a> © The Database Center for Life Science, licensed <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener">CC BY-SA 2.1 JP</a>. The model was simplified and the leg and hand positions changed.',
+  sound:'Sound',or:'Operating room',monA:'X-ray screen, drag to move the C-arm',controls:'Controls',padA:'Top view of the table, drag to move the C-arm',beamDir:'Beam direction'};
+const EN_NAMES={'اليد اليمنى':'Right hand','اليد اليسرى':'Left hand','القدم اليمنى':'Right foot','القدم اليسرى':'Left foot','الساعد الأيمن':'Right forearm','الساعد الأيسر':'Left forearm',
+  'العضد الأيمن':'Right upper arm','العضد الأيسر':'Left upper arm','الساق اليمنى':'Right lower leg','الساق اليسرى':'Left lower leg','الفخذ الأيمن':'Right thigh','الفخذ الأيسر':'Left thigh',
+  'الرأس':'Head','خارج الجسم':'Outside the body','الرقبة':'Neck','الحوض':'Pelvis','البطن':'Abdomen','الصدر':'Chest','الجمجمة':'Skull','أسفل الظهر':'Lumbar spine',
+  'الركبة اليسرى':'Left knee','الركبة اليمنى':'Right knee','الكوع الأيمن':'Right elbow','الكوع الأيسر':'Left elbow','الكتف الأيمن':'Right shoulder','الكتف الأيسر':'Left shoulder',
+  'الكاحل الأيمن':'Right ankle','الكاحل الأيسر':'Left ankle','الرسغ الأيمن':'Right wrist','الرسغ الأيسر':'Left wrist'};
+const nm=s=>LANG==='en'?(EN_NAMES[s]||s):s;
+const tk=(t,k)=>LANG==='en'&&t[k+'_en']?t[k+'_en']:t[k];
+const cdir=()=>LANG==='en'?'ltr':'rtl';
+function applyLang(){
+  const en=LANG==='en';document.documentElement.lang=en?'en':'ar';document.title=en?'C-arm Challenge':'تحدي الـ C-arm';
+  ['.app','#menu','#result'].forEach(q=>$(q).setAttribute('dir',en?'ltr':'rtl'));
+  document.querySelectorAll('[data-i]').forEach(el=>{if(el.dataset.ar==null)el.dataset.ar=el.innerHTML;el.innerHTML=en?(EN[el.dataset.i]??el.dataset.ar):el.dataset.ar;});
+  document.querySelectorAll('[data-ia]').forEach(el=>{if(el.dataset.arA==null)el.dataset.arA=el.getAttribute('aria-label');el.setAttribute('aria-label',en?(EN[el.dataset.ia]??el.dataset.arA):el.dataset.arA);});
+  document.querySelectorAll('.lang button').forEach(b=>{const on=b.dataset.lang===LANG;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);});
+}
 /* ---------- tasks ---------- */
 const TASKS=[
  {id:'foot',name:'القدم اليمنى',proj:'AP',anat:'foot',ax:173,ay:9,tx:171.5,ty:9,aT:10,aBase:10,hObj:4,fov:15,doseK:.1,kv:62,ma:1.4,rot:true,
-  brief:'المشط والأصابع كاملة في منتصف الشاشة، والمفاصل مفتوحة.',
+  brief:'المشط والأصابع كاملة في منتصف الشاشة، والمفاصل مفتوحة.',brief_en:'Metatarsals and toes fully centered, with the joints open.',
+  tip_en:'<b>AP foot:</b> angle the beam <b>10° toward the heel (Cranial)</b> so it is perpendicular to the metatarsals and opens the tarsometatarsal joints. Center on the base of the third metatarsal.',
   tip:'<b>AP للقدم:</b> تميل الأشعة <b>10° باتجاه الكعب (Cranial)</b> عشان تكون عمودية على عظام المشط وتنفتح مفاصل Tarsometatarsal. المركز على قاعدة المشط الثالث.'},
  {id:'hand',name:'اليد اليمنى',proj:'PA',anat:'hand',ax:104,ay:26,tx:107,ty:26,aT:0,aBase:0,hObj:2,fov:11,doseK:.06,kv:55,ma:1.0,rot:true,
-  brief:'الأصابع مفرودة والرسغ ظاهر. اليد على اللوح جنب المريض.',
+  brief:'الأصابع مفرودة والرسغ ظاهر. اليد على اللوح جنب المريض.',brief_en:'Fingers spread and the wrist visible. The hand rests on the board beside the patient.',
+  tip_en:'<b>PA hand:</b> the beam is <b>vertical (0°)</b>, centered on the third MCP joint. The hand is thin, so lower the detector until it is close: less magnification and less dose.',
   tip:'<b>PA لليد:</b> الأشعة <b>عمودية (0°)</b> ومركزها على مفصل MCP الثالث. اليد رقيقة، فنزّل الكاشف لين يقرب منها: تكبير أقل وجرعة أقل.'},
  {id:'pelvis',name:'الحوض',proj:'AP',anat:'pelvis',ax:92,ay:0,tx:92,ty:0,aT:0,aBase:0,hObj:12,fov:19,doseK:.45,kv:85,ma:3.2,rot:false,
-  brief:'الحوض متناظر، وفتحتي Obturator متساويات.',
+  brief:'الحوض متناظر، وفتحتي Obturator متساويات.',brief_en:'The pelvis is symmetric, with both obturator foramina equal.',
+  tip_en:'<b>AP pelvis:</b> the beam is <b>vertical (0°)</b>, centered midway between the ASIS and the pubic symphysis. Symmetry between both sides means no rotation.',
   tip:'<b>AP للحوض:</b> الأشعة <b>عمودية (0°)</b>، والمركز في المنتصف بين الـ ASIS والارتفاق العاني. التناظر بين الجهتين يعني ما فيه دوران.'},
  {id:'inlet',name:'الحوض',proj:'Inlet',anat:'pelvis',ax:92,ay:0,tx:92,ty:0,aT:-40,aBase:0,hObj:12,fov:19,doseK:.45,kv:88,ma:3.4,rot:false,hard:true,
-  brief:'حلقة الحوض تبان من فوق، والعجز فوق الارتفاق.',
+  brief:'حلقة الحوض تبان من فوق، والعجز فوق الارتفاق.',brief_en:'The pelvic ring is seen from above, with the sacrum over the symphysis.',
+  tip_en:'<b>Inlet:</b> a <b>40° tilt toward the feet (Caudal)</b> shows the pelvic ring from above. It is used to assess ring fractures and guide SI screws.',
   tip:'<b>Inlet:</b> ميلان <b>40° باتجاه القدمين (Caudal)</b> يعرض حلقة الحوض من الأعلى. يستخدم في تقييم كسور الحلقة وتوجيه مسامير SI.'},
 ];
 TASKS.forEach(t=>{t.zt=30;t.pose=t.id==='foot'?'f':'s';t.win=[1,5];});
@@ -735,12 +772,12 @@ function evaluate(P,t){const ex=Math.abs(P.X-t.tx),ey=Math.abs(P.Y-t.ty),ez=Math
 /* ---------- controls ---------- */
 const RANGE={X:[15,192],Y:[-40,40],Z:[0,60],A:[-45,45]};
 const fmt={
-  X:v=>`${v.toFixed(1)} سم`,
-  Y:v=>Math.abs(v)<.25?'المنتصف':`${Math.abs(v).toFixed(1)} سم ${v>0?'يمين':'يسار'}`,
-  Z:v=>`${v.toFixed(0)} سم`,
-  A:v=>v===0?'0° عمودي':`${Math.abs(v)}° ${v>0?'Cr':'Ca'}`};
+  X:v=>`${v.toFixed(1)} ${L('سم','cm')}`,
+  Y:v=>Math.abs(v)<.25?L('المنتصف','center'):`${Math.abs(v).toFixed(1)} ${L('سم','cm')} ${v>0?L('يمين','right'):L('يسار','left')}`,
+  Z:v=>`${v.toFixed(0)} ${L('سم','cm')}`,
+  A:v=>v===0?L('0° عمودي','0° vertical'):`${Math.abs(v)}° ${v>0?'Cr':'Ca'}`};
 const padCv=$('#pad'),monEl=$('#monitor');
-function syncUI(){$('#oZ').textContent=fmt.Z(S.Z);$('#oA').textContent=fmt.A(S.A);$('#hOut').innerHTML=`${Math.round(S.Z)}<small>${S.proj==='lat'?'ارتفاع الأشعة':'ارتفاع الكاشف'}</small>`;}
+function syncUI(){$('#oZ').textContent=fmt.Z(S.Z);$('#oA').textContent=fmt.A(S.A);$('#hOut').innerHTML=`${Math.round(S.Z)}<small>${S.proj==='lat'?L('ارتفاع الأشعة','Beam height'):L('ارتفاع الكاشف','Detector height')}</small>`;}
 function applyCollision(){if(S.proj==='lat')return;const mz=minZ(S.X,S.Y,S.task.pose);if(S.Z<mz){S.Z=Math.ceil(mz*2)/2;if(!AR.on)S.collide=1.6;}}
 function setVal(k,v){S[k]=clamp(+v,RANGE[k][0],RANGE[k][1]);if(k==='A')S.A=Math.round(S.A);applyCollision();syncUI();}
 
@@ -781,7 +818,7 @@ monEl.addEventListener('pointermove',e=>{if(!monDrag)return;const t=S.task,r=mcv
 const fb=$('#btnFluoro');let beamOn=0;
 function fluoro(on){if(!S.playing)on=false;if(on===S.fluoro)return;S.fluoro=on;beamOn=0;
   fb.classList.toggle('on',on);fb.setAttribute('aria-pressed',on);$('#stFT').classList.toggle('hot',on);
-  $('#fluoroLbl').textContent=on?'إيقاف':'أشعة';$('#fluoroSub').textContent=on?'الأشعة شغّالة':'اضغط للتشغيل';
+  $('#fluoroLbl').textContent=on?L('إيقاف','Stop'):L('أشعة','X-ray');$('#fluoroSub').textContent=on?L('الأشعة شغّالة','Beam on'):L('اضغط للتشغيل','Tap to start');
   if(on)renderLive();}
 fb.addEventListener('click',()=>fluoro(!S.fluoro));
 
@@ -806,13 +843,13 @@ function hint(){
     {k:'Z',v:S.Z>t.zt+2?t.zt-S.Z:0,w:1.2,tol:2},{k:'A',v:t.aT-S.A,w:2.2,tol:1.5}]
     .map(o=>({...o,p:Math.max(0,Math.abs(o.v)-o.tol)*o.w})).sort((a,b)=>b.p-a.p);
   const top=e[0];let msg;
-  if(top.p<=0){msg='الوضعية ممتازة! اضغط «التقاط الصورة».';}
+  if(top.p<=0){msg=L('الوضعية ممتازة! اضغط «التقاط الصورة».','Perfect position! Tap “Take image”.');}
   else{
     S.hints++;const n=Math.abs(top.v);
-    if(top.k==='X')msg=`حرّك الجهاز ${n.toFixed(0)} سم باتجاه ${top.v>0?'القدمين':'الرأس'}.`;
-    if(top.k==='Y')msg=`حرّك الجهاز ${n.toFixed(0)} سم باتجاه ${top.v>0?'يمين':'يسار'} المريض.`;
-    if(top.k==='Z')msg=`نزّل الجهاز ${n.toFixed(0)} سم. الكاشف القريب من المريض يعطي صورة أوضح وجرعة أقل.`;
-    if(top.k==='A')msg=`ميّل الجهاز ${Math.round(n)}° باتجاه ${top.v>0?'الرأس (Cranial)':'القدمين (Caudal)'}.`;
+    if(top.k==='X')msg=L(`حرّك الجهاز ${n.toFixed(0)} سم باتجاه ${top.v>0?'القدمين':'الرأس'}.`,`Move the C-arm ${n.toFixed(0)} cm toward the ${top.v>0?'feet':'head'}.`);
+    if(top.k==='Y')msg=L(`حرّك الجهاز ${n.toFixed(0)} سم باتجاه ${top.v>0?'يمين':'يسار'} المريض.`,`Move the C-arm ${n.toFixed(0)} cm toward the patient’s ${top.v>0?'right':'left'}.`);
+    if(top.k==='Z')msg=L(`نزّل الجهاز ${n.toFixed(0)} سم. الكاشف القريب من المريض يعطي صورة أوضح وجرعة أقل.`,`Lower the C-arm ${n.toFixed(0)} cm. A detector close to the patient gives a sharper image and less dose.`);
+    if(top.k==='A')msg=L(`ميّل الجهاز ${Math.round(n)}° باتجاه ${top.v>0?'الرأس (Cranial)':'القدمين (Caudal)'}.`,`Tilt the C-arm ${Math.round(n)}° toward the ${top.v>0?'head (Cranial)':'feet (Caudal)'}.`);
   }
   $('#hintCount').textContent=S.hints?`×${S.hints}`:'−50';
   toast(msg,6000);
@@ -830,8 +867,8 @@ function drawPad(){
   if(MODEL.ready)drawPatientTop(c,X,Y,sx,sy,t.pose);
   // labels
   c.font=`500 ${10.5*d}px ${getComputedStyle(document.body).getPropertyValue('--f-body')}`;c.fillStyle='#7f9a95';
-  c.textAlign='left';c.fillText('الرأس',X(1),Y(-35));c.textAlign='right';c.fillText('القدمين',X(196),Y(-35));
-  c.textAlign='right';c.fillText('يمين المريض',X(196),Y(40));c.textAlign='center';c.fillText('يسار المريض',X(150),Y(-35));
+  c.direction='ltr';c.textAlign='left';c.fillText(L('الرأس','Head'),X(1),Y(-35));c.textAlign='right';c.fillText(L('القدمين','Feet'),X(196),Y(-35));
+  c.textAlign='right';c.fillText(L('يمين المريض','Patient’s right'),X(196),Y(40));c.textAlign='center';c.fillText(L('يسار المريض','Patient’s left'),X(150),Y(-35));
   arcadePad(c,X,Y,sx,sy,d);
   // beam footprint
   if(S.proj==='lat'){const bx=X(S.X),w=t.fov*sx;
@@ -855,12 +892,12 @@ function startTask(t){
   S.Y=clamp(t.ty+(Math.random()<.5?-1:1)*rnd(6,13),-40,40);S.Z=Math.round(rnd(49,58));
   S.A=clamp(Math.round(t.aT+(Math.random()<.5?-1:1)*rnd(12,24)),-45,45);
   applyCollision();syncUI();
-  $('#taskTitle').textContent=`${t.name} · ${t.proj}`;$('#taskBrief').textContent=t.brief;
+  $('#taskTitle').textContent=`${nm(t.name)} · ${t.proj}`;$('#taskBrief').textContent=tk(t,'brief');
   renderXray($('#ref'),ideal(t),t,{});
   $('#hintCount').textContent='−50';$('#dragTip').hidden=false;$('#toast').hidden=true;
   S.t0=performance.now();S.playing=true;
   $('#menu').hidden=true;$('#result').hidden=true;
-  setTimeout(()=>{if(S.playing&&!S.hasImage)toast('اسحب الدائرة فوق الجزء المطلوب، وبعدها شغّل الأشعة.',4500);},300);
+  setTimeout(()=>{if(S.playing&&!S.hasImage)toast(L('اسحب الدائرة فوق الجزء المطلوب، وبعدها شغّل الأشعة.','Drag the circle over the target, then turn on the X-ray.'),4500);},300);
 }
 function openMenu(){fluoro(false);S.playing=false;S.fluoro=false;AR.on=false;$('#result').hidden=true;$('#menu').hidden=false;$('#count').hidden=true;renderMenuLB();buildCards();}
 $('#btnMenu').addEventListener('click',openMenu);
@@ -875,38 +912,38 @@ function capture(){
   const score=Math.max(0,Math.round(ev.acc*10-S.ft*12-S.hints*50));
   const stars=ev.acc>=90&&S.ft<=12&&S.hints<=1?3:ev.acc>=75?2:ev.acc>=50?1:0;
   const isBest=score>(best[t.id]||0);if(isBest){best[t.id]=score;try{localStorage.setItem('carm-best',JSON.stringify(best));}catch(e){}}
-  const head=['ما زبطت. جرّب مرة ثانية!','بداية حلوة','صورة مقبولة','صورة تشخيصية ممتازة'][stars];
-  const st=(v,tol,near)=>v<=tol?'<span class="chip g">ممتاز</span>':v<=near?'<span class="chip w">قريب</span>':'<span class="chip b">بعيد</span>';
+  const head=(LANG==='en'?['Not quite. Try again!','Nice start','Acceptable image','Excellent diagnostic image']:['ما زبطت. جرّب مرة ثانية!','بداية حلوة','صورة مقبولة','صورة تشخيصية ممتازة'])[stars];
+  const st=(v,tol,near)=>v<=tol?`<span class="chip g">${L('ممتاز','Great')}</span>`:v<=near?`<span class="chip w">${L('قريب','Close')}</span>`:`<span class="chip b">${L('بعيد','Off')}</span>`;
   const row=(n,you,tgt,s)=>`<tr><td>${n}</td><td class="n">${you}</td><td class="n">${tgt}</td><td>${s}</td></tr>`;
   $('#resultBody').innerHTML=`
     <div class="res-top">
-      <div class="stars" aria-label="${stars} من 3 نجوم">${[0,1,2].map(i=>starSVG(i<stars)).join('')}</div>
-      <div><div class="score-l">النقاط</div><div class="score">${score}</div></div>
+      <div class="stars" aria-label="${L(stars+' من 3 نجوم',stars+' of 3 stars')}">${[0,1,2].map(i=>starSVG(i<stars)).join('')}</div>
+      <div><div class="score-l">${L('النقاط','Score')}</div><div class="score">${score}</div></div>
       <div><div style="font-family:var(--f-display);font-weight:600;font-size:1.25rem">${head}</div>
-        <div class="score-l">${t.name} · ${t.proj}${isBest&&score>0?' · <span class="record">رقم قياسي جديد على هذا الجهاز</span>':best[t.id]?` · أفضل نتيجة: ${best[t.id]}`:''}</div></div>
+        <div class="score-l">${nm(t.name)} · ${t.proj}${isBest&&score>0?` · <span class="record">${L('رقم قياسي جديد على هذا الجهاز','New record on this device')}</span>`:best[t.id]?` · ${L('أفضل نتيجة','Best')}: ${best[t.id]}`:''}</div></div>
     </div>
     <div class="metrics">
-      <div class="metric"><span>دقة الوضعية</span><b>${ev.acc.toFixed(0)}%</b></div>
-      <div class="metric"><span>زمن الأشعة</span><b>${S.ft.toFixed(1)} ث</b></div>
-      <div class="metric"><span>الجرعة</span><b>${S.dose.toFixed(2)} mGy</b></div>
-      <div class="metric"><span>التلميحات</span><b>${S.hints}</b></div>
+      <div class="metric"><span>${L('دقة الوضعية','Position accuracy')}</span><b>${ev.acc.toFixed(0)}%</b></div>
+      <div class="metric"><span>${L('زمن الأشعة','Fluoro time')}</span><b>${S.ft.toFixed(1)} ${L('ث','s')}</b></div>
+      <div class="metric"><span>${L('الجرعة','Dose')}</span><b>${S.dose.toFixed(2)} mGy</b></div>
+      <div class="metric"><span>${L('التلميحات','Hints')}</span><b>${S.hints}</b></div>
     </div>
     <div class="compare">
-      <figure><canvas id="cYou" width="420" height="420"></canvas><figcaption>صورتك</figcaption></figure>
-      <figure><canvas id="cIdeal" width="420" height="420"></canvas><figcaption>الصورة المطلوبة</figcaption></figure>
+      <figure><canvas id="cYou" width="420" height="420"></canvas><figcaption>${L('صورتك','Your image')}</figcaption></figure>
+      <figure><canvas id="cIdeal" width="420" height="420"></canvas><figcaption>${L('الصورة المطلوبة','Target image')}</figcaption></figure>
     </div>
     <div class="tbl-wrap"><table class="breakdown">
-      <thead><tr><th>المحور</th><th>وضعك</th><th>الصحيح</th><th>التقييم</th></tr></thead>
+      <thead><tr><th>${L('المحور','Axis')}</th><th>${L('وضعك','Yours')}</th><th>${L('الصحيح','Correct')}</th><th>${L('التقييم','Rating')}</th></tr></thead>
       <tbody>
-        ${row('الطولي X',P.X.toFixed(1)+' سم',t.tx.toFixed(1)+' سم',st(ev.ex,1.5,4))}
-        ${row('العرضي Y',fmt.Y(P.Y),fmt.Y(t.ty),st(ev.ey,1.5,4))}
-        ${row('الارتفاع Z',P.Z.toFixed(1)+' سم',t.zt.toFixed(1)+' سم',st(ev.ez,2,8))}
-        ${row('الميلان',fmt.A(P.A),fmt.A(t.aT),st(ev.ea,2,6))}
+        ${row(L('الطولي X','Longitudinal X'),fmt.X(P.X),fmt.X(t.tx),st(ev.ex,1.5,4))}
+        ${row(L('العرضي Y','Transverse Y'),fmt.Y(P.Y),fmt.Y(t.ty),st(ev.ey,1.5,4))}
+        ${row(L('الارتفاع Z','Height Z'),fmt.X(P.Z),fmt.X(t.zt),st(ev.ez,2,8))}
+        ${row(L('الميلان','Tilt'),fmt.A(P.A),fmt.A(t.aT),st(ev.ea,2,6))}
       </tbody></table></div>
-    <div class="tip">${t.tip}</div>
+    <div class="tip">${tk(t,'tip')}</div>
     <div class="res-actions">
-      <button class="btn btn-primary" id="rAgain" type="button">حاول مرة ثانية</button>
-      <button class="ghost" id="rMenu" type="button">مهمة أخرى</button>
+      <button class="btn btn-primary" id="rAgain" type="button">${L('حاول مرة ثانية','Try again')}</button>
+      <button class="ghost" id="rMenu" type="button">${L('مهمة أخرى','Another task')}</button>
     </div>`;
   renderXray($('#cYou'),P,t,{noise:true,frame:1});renderXray($('#cIdeal'),ideal(t),t,{});
   $('#result').hidden=false;$('#result').scrollTop=0;
@@ -919,8 +956,8 @@ function buildCards(){
   const box=$('#cards');box.innerHTML='';
   TASKS.forEach(t=>{
     const b=document.createElement('button');b.type='button';b.className='card';
-    b.innerHTML=`<canvas width="320" height="320"></canvas><b>${t.name}</b>
-      <div class="meta"><span class="tag ${t.hard?'hard':''}">${t.proj}${t.hard?' · تحدي':''}</span><span>${best[t.id]?'أفضل نتيجة '+best[t.id]:'لم تُلعب بعد'}</span></div>`;
+    b.innerHTML=`<canvas width="320" height="320"></canvas><b>${nm(t.name)}</b>
+      <div class="meta"><span class="tag ${t.hard?'hard':''}">${t.proj}${t.hard?L(' · تحدي',' · Hard'):''}</span><span>${best[t.id]?L('أفضل نتيجة ','Best ')+best[t.id]:L('لم تُلعب بعد','Not played yet')}</span></div>`;
     renderXray(b.querySelector('canvas'),ideal(t),t,{});
     b.addEventListener('click',()=>startTask(t));box.appendChild(b);
   });
@@ -1007,8 +1044,8 @@ function drawScene(time){
   const bf=getComputedStyle(document.body).getPropertyValue('--f-body');
   c.font=`500 ${Math.max(10,4.2*k)}px ${bf}`;c.fillStyle='rgba(228,238,235,.75)';c.textAlign='center';
   const lD=add(add(D,u,17),n,0),lT=add(T,u,-21);
-  if(py(lD[1])>14)c.fillText('الكاشف',px(lD[0]),py(lD[1]));
-  if(py(lT[1])<H-6)c.fillText('أنبوب الأشعة',px(lT[0]),py(lT[1]));
+  if(py(lD[1])>14)c.fillText(L('الكاشف','Detector'),px(lD[0]),py(lD[1]));
+  if(py(lT[1])<H-6)c.fillText(L('أنبوب الأشعة','X-ray tube'),px(lT[0]),py(lT[1]));
 
 }
 
@@ -1028,7 +1065,7 @@ function drawLatCarm(c,px,py,k,on){
   c.fillStyle='#4a5756';c.beginPath();c.arc(px(X),py(V),5*k,0,Math.PI*2);c.fill();
   c.fillStyle=on?'#f4b63f':'#2b3433';c.beginPath();c.arc(px(X),py(V),2.2*k,0,Math.PI*2);c.fill();
   c.font=`500 ${Math.max(10,4.2*k)}px ${getComputedStyle(document.body).getPropertyValue('--f-body')}`;c.fillStyle='rgba(228,238,235,.75)';
-  c.fillText('أنبوب الأشعة (لاترل)',px(X),py(V-14));
+  c.fillText(L('أنبوب الأشعة (Lateral)','X-ray tube (Lateral)'),px(X),py(V-14));
 }
 /* ---------- monitor ---------- */
 function drawMonitor(){
@@ -1037,8 +1074,8 @@ function drawMonitor(){
   if(S.hasImage&&xbuf.width===Sz)c.drawImage(xbuf,0,0);
   else if(S.hasImage){renderXray(xbuf,S.lastP||S,t,{noise:true,frame:S.frame});c.drawImage(xbuf,0,0);}
   else{c.strokeStyle='rgba(255,255,255,.08)';c.lineWidth=Sz*.004;c.beginPath();c.arc(Sz/2,Sz/2,Sz*.47,0,Math.PI*2);c.stroke();
-    c.fillStyle='#6f8783';c.textAlign='center';c.font=`500 ${Sz*.042}px ${bf}`;c.direction='rtl';
-    c.fillText('شغّل «أشعة»',Sz/2,Sz/2-Sz*.01);c.font=`400 ${Sz*.034}px ${bf}`;c.fillText('عشان تشوف الصورة',Sz/2,Sz/2+Sz*.05);c.direction='ltr';}
+    c.fillStyle='#6f8783';c.textAlign='center';c.font=`500 ${Sz*.042}px ${bf}`;c.direction=cdir();
+    c.fillText(L('شغّل «أشعة»','Turn on “X-ray”'),Sz/2,Sz/2-Sz*.01);c.font=`400 ${Sz*.034}px ${bf}`;c.fillText(L('عشان تشوف الصورة','to see the image'),Sz/2,Sz/2+Sz*.05);c.direction='ltr';}
   if(S.fluoro)S.lastP={X:S.X,Y:S.Y,Z:S.Z,A:S.A};
   if(document.body.classList.contains('arcade')){arcadeMonitor(c,Sz,bf,mono);return;}
   const f=Sz*.036;c.font=`600 ${f}px ${mono}`;c.textAlign='left';c.direction='ltr';
@@ -1048,9 +1085,9 @@ function drawMonitor(){
   if(S.fluoro){c.fillStyle='#ff5f4f';c.beginPath();c.arc(Sz*.5-Sz*.085,Sz*.056,Sz*.013,0,Math.PI*2);c.fill();c.fillText('FLUORO',Sz*.5+Sz*.012,Sz*.068);}
   else if(S.hasImage){c.fillStyle='#8ea7a1';c.fillText('LIH',Sz*.5,Sz*.068);}
   c.fillStyle='#9fb6b1';c.font=`400 ${Sz*.03}px ${mono}`;c.fillText(`${t.kv} kV · ${t.ma.toFixed(1)} mA · 15 p/s`,Sz*.5,Sz*.108);c.font=`600 ${f}px ${mono}`;
-  if(S.hasImage&&S.region){c.textAlign='center';c.direction='rtl';c.font=`600 ${Sz*.034}px ${bf}`;
+  if(S.hasImage&&S.region){c.textAlign='center';c.direction=cdir();c.font=`600 ${Sz*.034}px ${bf}`;
     const ok=S.region===S.task.name||(S.task.anat==='pelvis'&&S.region==='الحوض');
-    c.fillStyle=ok?'#62d391':'#f4b63f';c.fillText(S.region,Sz*.5,Sz*.958);c.direction='ltr';c.font=`600 ${f}px ${mono}`;}
+    c.fillStyle=ok?'#62d391':'#f4b63f';c.fillText(nm(S.region),Sz*.5,Sz*.958);c.direction='ltr';c.font=`600 ${f}px ${mono}`;}
   c.textAlign='right';const m=Math.floor(S.ft/60),s=(S.ft%60).toFixed(1).padStart(4,'0');
   c.fillStyle=S.fluoro?'#f4b63f':'#9fb6b1';c.fillText(`${m}:${s}`,Sz*.955,Sz*.91);c.fillText(`${S.dose.toFixed(2)} mGy`,Sz*.955,Sz*.955);
 }
@@ -1068,7 +1105,7 @@ function noiseHit(v=.08,len=.02){const c=aud();if(!c)return;const n=Math.max(1,M
   for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);const s=c.createBufferSource(),g=c.createGain();g.gain.value=v;s.buffer=b;s.connect(g).connect(c.destination);s.start();}
 const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}};
 const sndBtn=$('#btnSound');
-function syncSnd(){sndBtn.setAttribute('aria-pressed',SND.on);sndBtn.classList.toggle('off',!SND.on);sndBtn.title=SND.on?'كتم الصوت':'تشغيل الصوت';}
+function syncSnd(){sndBtn.setAttribute('aria-pressed',SND.on);sndBtn.classList.toggle('off',!SND.on);sndBtn.title=SND.on?L('كتم الصوت','Mute'):L('تشغيل الصوت','Unmute');}
 sndBtn.addEventListener('click',()=>{SND.on=!SND.on;try{localStorage.setItem('carm-sound',SND.on?'1':'0');}catch(e){}syncSnd();if(SND.on)tone(880,.08,'triangle',.1);});
 syncSnd();
 
@@ -1106,17 +1143,18 @@ function setupArcade(){
 
 /* ---------- arcade state ---------- */
 const AR={on:false,ended:false};
-const RANKS=[[0,'متدرب جديد'],[1000,'طالب امتياز'],[2500,'أخصائي أشعة'],[5000,'أخصائي أول'],[8000,'استشاري أشعة تداخلية']];
+const RANKS=[[0,'متدرب جديد','Rookie trainee'],[1000,'طالب امتياز','Intern'],[2500,'أخصائي أشعة','Radiology specialist'],[5000,'أخصائي أول','Senior specialist'],[8000,'استشاري أشعة تداخلية','IR consultant']];
+const rkName=r=>L(r[1],r[2]);
 const rankOf=s=>{let i=0;RANKS.forEach((r,j)=>{if(s>=r[0])i=j;});return i;};
 const nf=n=>n.toLocaleString('en-US');
 function loadLB(){try{const a=JSON.parse(localStorage.getItem('carm-lb')||'[]');return Array.isArray(a)?a:[];}catch(e){return[];}}
 function saveLB(a){try{localStorage.setItem('carm-lb',JSON.stringify(a.slice(0,10)));}catch(e){}}
-function lbHTML(a,me){if(!a.length)return'<li class="empty">ما فيه نتائج للحين. كن أول بطل!</li>';
-  return a.slice(0,5).map((r,i)=>`<li class="${i===me?'me':''}"><span>${escapeHTML(r.n)}</span><b>${nf(r.s)}</b></li>`).join('');}
+function lbHTML(a,me){if(!a.length)return`<li class="empty">${L('ما فيه نتائج للحين. كن أول بطل!','No scores yet. Be the first champion!')}</li>`;
+  return a.slice(0,5).map((r,i)=>`<li class="${i===me?'me':''}"><span dir="auto">${escapeHTML(r.n)}</span><b>${nf(r.s)}</b></li>`).join('');}
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function renderMenuLB(){$('#lbMenu').innerHTML=lbHTML(loadLB(),-1);
   let b=0;try{b=+localStorage.getItem('carm-arcade-best')||0;}catch(e){}
-  $('#menuBest').textContent=b?`أفضل نتيجة على هذا الجهاز: ${nf(b)}`:'45 ثانية · كل لقطة تزيد وقتك';}
+  $('#menuBest').textContent=b?L(`أفضل نتيجة على هذا الجهاز: ${nf(b)}`,`Best on this device: ${nf(b)}`):L('45 ثانية · كل لقطة تزيد وقتك','45 seconds · every shot adds time');}
 
 function difficulty(){const l=AR.level;AR.tolF=Math.max(.16,.3-.02*l);AR.magnet=l<3?3.4:l<5?2.6:2;AR.lockT=l<3?.3:.4;AR.zTol=Math.max(8,16-2*l);}
 function startArcade(){
@@ -1126,7 +1164,7 @@ function startArcade(){
     tick:0,blip:0,lowSec:99,rx:1e9,ry:0,rz:0,lastR:0,heat:0,t:null});
   difficulty();S.playing=true;S.fluoro=true;S.hasImage=false;S.collide=0;S.A=0;S.proj='ap';AR.seenLat=false;
   S.X=rnd(55,110);S.Y=rnd(-6,6);S.Z=Math.round(minZ(S.X,S.Y,'f')+14);syncProjUI();syncUI();
-  $('#taskTitle').textContent='تحدي السرعة';$('#taskBrief').textContent='صوّر أكبر عدد قبل ما يخلص الوقت';
+  $('#taskTitle').textContent=L('تحدي السرعة','Speed Challenge');$('#taskBrief').textContent=L('صوّر أكبر عدد قبل ما يخلص الوقت','Shoot as many as you can before time runs out');
   $('#hudScore').textContent='0';setCombo(false);
   nextTarget(performance.now());$('#count').hidden=false;
 }
@@ -1144,14 +1182,14 @@ function nextTarget(now){
   const t=pickTarget();AR.t=t;S.task=t;AR.last=[t.id,...AR.last].slice(0,3);
   AR.tol=t.fov*AR.tolF;AR.lock=0;AR.tStart=now;AR.hint=false;
   renderXray($('#ref'),ideal(t),t,{});
-  const b=$('#tgt');$('#tgtName').textContent=t.name;const tv=$('#tgtView');tv.textContent=t.view==='lat'?'لاترل':'AP';tv.classList.toggle('lat',t.view==='lat');
+  const b=$('#tgt');$('#tgtName').textContent=nm(t.name);const tv=$('#tgtView');tv.textContent=t.view==='lat'?'Lateral':'AP';tv.classList.toggle('lat',t.view==='lat');
   b.classList.remove('new');void b.offsetWidth;b.classList.add('new');clearNudge();
-  if(t.view==='lat'&&!AR.seenLat){AR.seenLat=true;setTimeout(()=>pop('صورة لاترل!','اضغط «لاترل» وعدّل الارتفاع','lvl'),350);$('#vLAT').classList.add('nudge');}
+  if(t.view==='lat'&&!AR.seenLat){AR.seenLat=true;setTimeout(()=>pop(L('صورة Lateral!','Lateral shot!'),L('اضغط «Lateral» وعدّل الارتفاع','Tap “Lateral” and set the height'),'lvl'),350);$('#vLAT').classList.add('nudge');}
   if(AR.count<=0){tone(740,.09,'triangle',.08);tone(988,.12,'triangle',.08,.07);}
 }
 function setPos(x,y){S.X=clamp(x,RANGE.X[0],RANGE.X[1]);S.Y=clamp(y,RANGE.Y[0],RANGE.Y[1]);}
 function setCombo(bump){const m=Math.min(5,1+Math.floor(Math.max(0,AR.combo-1)/2));const el=$('#hudCombo');
-  el.querySelector('b').textContent='×'+m;el.querySelector('span').textContent=AR.combo>1?`كومبو ${AR.combo}`:'كومبو';
+  el.querySelector('b').textContent='×'+m;el.querySelector('span').textContent=AR.combo>1?`${L('كومبو','Combo')} ${AR.combo}`:L('كومبو','Combo');
   el.classList.toggle('hot',m>1);if(bump){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');}return m;}
 function pop(big,small,cls=''){const p=document.createElement('div');p.className='pop '+cls;p.innerHTML=`${big}${small?`<small>${small}</small>`:''}`;
   $('#pops').appendChild(p);setTimeout(()=>p.remove(),1100);}
@@ -1162,24 +1200,24 @@ function hit(now){
   const low=t.view!=='lat'&&S.Z<=t.zt+3,mult=setCombo(true),speed=Math.max(0,Math.round(150-el*30)),pts=(100+speed+t.bonus+(low?50:0))*mult;
   AR.score+=pts;AR.hits++;AR.times.push(el);
   const tb=Math.max(1.2,3.6-.3*AR.level)+(el<2?1:0);AR.time+=tb;
-  const word=el<1.6?'خرافي!':el<2.5?'سريع!':el<4?'ممتاز!':'تم!';
-  pop('+'+nf(pts),word+(mult>1?` ×${mult}`:'')+(low?' · جرعة أقل':''));clearNudge();
-  const tp=$('#timePop');tp.textContent=`+${Math.round(tb)} ث`;tp.classList.remove('go');void tp.offsetWidth;tp.classList.add('go');
+  const word=el<1.6?L('خرافي!','Insane!'):el<2.5?L('سريع!','Fast!'):el<4?L('ممتاز!','Great!'):L('تم!','Done!');
+  pop('+'+nf(pts),word+(mult>1?` ×${mult}`:'')+(low?L(' · جرعة أقل',' · Lower dose'):''));clearNudge();
+  const tp=$('#timePop');tp.textContent=`+${Math.round(tb)} ${L('ث','s')}`;tp.classList.remove('go');void tp.offsetWidth;tp.classList.add('go');
   $('#hudScore').textContent=nf(AR.score);
   const fl=$('#flash');fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go');
   burst(26+mult*6);buzz(mult>2?[20,30,40]:30);
   noiseHit(.22,.09);const base=523.25*Math.pow(2,Math.min(AR.combo-1,9)/12);tone(base,.16,'triangle',.13,.02);tone(base*1.5,.22,'triangle',.11,.09);
-  renderLive();const th=document.createElement('canvas');th.width=th.height=96;th.getContext('2d').drawImage(xbuf,0,0,96,96);th.title=t.name;AR.album.push(th);
+  renderLive();const th=document.createElement('canvas');th.width=th.height=96;th.getContext('2d').drawImage(xbuf,0,0,96,96);th.title=nm(t.name);AR.album.push(th);
   const nl=Math.floor(AR.hits/4);
   if(nl>AR.level){AR.level=nl;difficulty();
-    setTimeout(()=>{pop(`المستوى ${nl+1}`,nl===1?'جديد: صور لاترل من الجنب':nl===2?'جديد: الركب والفخذ والرقبة':nl===4?'جديد: الكوع والكتف':'الدائرة أصغر، ركّز!','lvl');
+    setTimeout(()=>{pop(L(`المستوى ${nl+1}`,`Level ${nl+1}`),nl===1?L('جديد: صور Lateral من الجنب','New: Lateral shots from the side'):nl===2?L('جديد: الركب والفخذ والرقبة','New: knees, thigh and neck'):nl===4?L('جديد: الكوع والكتف','New: elbows and shoulders'):L('الدائرة أصغر، ركّز!','Smaller target. Focus!'),'lvl');
       [523,659,784,1047].forEach((f,i)=>tone(f,.14,'triangle',.1,i*.08));},500);}
   AR.pause=.55;AR.lock=0;
 }
 function endArcade(){
   AR.on=false;AR.ended=true;S.playing=false;S.fluoro=false;$('#count').hidden=true;
   tone(440,.7,'sawtooth',.07,0,110);buzz([60,40,60]);
-  pop('انتهى الوقت!','','lvl');
+  pop(L('انتهى الوقت!','Time’s up!'),'','lvl');
   let best=0;try{best=+localStorage.getItem('carm-arcade-best')||0;}catch(e){}
   const record=AR.score>best;if(record){try{localStorage.setItem('carm-arcade-best',AR.score);}catch(e){}}
   setTimeout(()=>showArcadeResult(record,Math.max(best,AR.score)),1100);
@@ -1190,26 +1228,26 @@ function showArcadeResult(record,best){
   const avg=AR.times.length?(AR.times.reduce((a,b)=>a+b,0)/AR.times.length):0;
   $('#resultBody').innerHTML=`
     <div class="go-head">
-      <div class="eyebrow">${record&&s>0?'رقم قياسي جديد!':'انتهى الوقت'}</div>
+      <div class="eyebrow">${record&&s>0?L('رقم قياسي جديد!','New record!'):L('انتهى الوقت','Time’s up')}</div>
       <div class="score">${nf(s)}</div>
-      <div class="rank">${RANKS[ri][1]}</div>
-      ${nx?`<div class="next">باقي ${nf(nx[0]-s)} نقطة على «${nx[1]}»</div>`:'<div class="next">وصلت أعلى رتبة!</div>'}
+      <div class="rank">${rkName(RANKS[ri])}</div>
+      ${nx?`<div class="next">${L(`باقي ${nf(nx[0]-s)} نقطة على «${nx[1]}»`,`${nf(nx[0]-s)} points to “${nx[2]}”`)}</div>`:`<div class="next">${L('وصلت أعلى رتبة!','You reached the top rank!')}</div>`}
     </div>
     <div class="metrics">
-      <div class="metric"><span>لقطات</span><b>${AR.hits}</b></div>
-      <div class="metric"><span>أعلى كومبو</span><b>${AR.bestCombo}</b></div>
-      <div class="metric"><span>متوسط السرعة</span><b>${avg.toFixed(1)} ث</b></div>
-      <div class="metric"><span>أفضل نتيجة</span><b>${nf(best)}</b></div>
+      <div class="metric"><span>${L('لقطات','Shots')}</span><b>${AR.hits}</b></div>
+      <div class="metric"><span>${L('أعلى كومبو','Best combo')}</span><b>${AR.bestCombo}</b></div>
+      <div class="metric"><span>${L('متوسط السرعة','Avg. speed')}</span><b>${avg.toFixed(1)} ${L('ث','s')}</b></div>
+      <div class="metric"><span>${L('أفضل نتيجة','Best score')}</span><b>${nf(best)}</b></div>
     </div>
-    ${AR.album.length?'<div class="album-label">صورك في هذي الجولة</div><div class="album" id="album"></div>':''}
-    ${qualifies?`<form class="save" id="saveForm"><label for="lbName">دخلت لوحة الأبطال! اكتب اسمك</label>
-      <div class="save-row"><input id="lbName" maxlength="16" autocomplete="off" placeholder="اسمك"><button class="btn btn-primary" type="submit">احفظ</button></div></form>`:''}
-    <div class="lb-head"><b>لوحة الأبطال</b><span>على هذا الجهاز</span></div>
+    ${AR.album.length?`<div class="album-label">${L('صورك في هذي الجولة','Your images this round')}</div><div class="album" id="album"></div>`:''}
+    ${qualifies?`<form class="save" id="saveForm"><label for="lbName">${L('دخلت لوحة الأبطال! اكتب اسمك','You made the leaderboard! Enter your name')}</label>
+      <div class="save-row"><input id="lbName" dir="auto" maxlength="16" autocomplete="off" placeholder="${L('اسمك','Your name')}"><button class="btn btn-primary" type="submit">${L('احفظ','Save')}</button></div></form>`:''}
+    <div class="lb-head"><b>${L('لوحة الأبطال','Leaderboard')}</b><span>${L('على هذا الجهاز','On this device')}</span></div>
     <ol class="lb" id="lbEnd">${lbHTML(lb,-1)}</ol>
-    <div class="res-actions"><button class="btn btn-start" id="rPlay" type="button">العب مرة ثانية</button><button class="ghost" id="rMenu2" type="button">القائمة</button></div>`;
+    <div class="res-actions"><button class="btn btn-start" id="rPlay" type="button">${L('العب مرة ثانية','Play again')}</button><button class="ghost" id="rMenu2" type="button">${L('القائمة','Menu')}</button></div>`;
   const al=$('#album');if(al)AR.album.forEach(c=>al.appendChild(c));
   const f=$('#saveForm');
-  if(f)f.addEventListener('submit',e=>{e.preventDefault();const n=($('#lbName').value.trim()||'لاعب').slice(0,16);
+  if(f)f.addEventListener('submit',e=>{e.preventDefault();const n=($('#lbName').value.trim()||L('لاعب','Player')).slice(0,16);
     const a=loadLB();const row={n,s};a.push(row);a.sort((x,y)=>y.s-x.s);saveLB(a);
     $('#lbEnd').innerHTML=lbHTML(a,a.indexOf(row));f.remove();tone(784,.1,'triangle',.1);tone(1047,.16,'triangle',.1,.08);});
   $('#rPlay').addEventListener('click',startArcade);$('#rMenu2').addEventListener('click',openMenu);
@@ -1222,7 +1260,7 @@ function arcadeTick(dt,now){
   const cEl=$('#count');
   if(AR.count>0){
     const prev=Math.ceil(AR.count/.8);AR.count-=dt;const n=Math.ceil(AR.count/.8);
-    if(AR.count<=0){cEl.textContent='يلا!';cEl.classList.add('go');tone(880,.25,'triangle',.12);AR.tStart=now;setTimeout(()=>{cEl.hidden=true;cEl.classList.remove('go');},450);}
+    if(AR.count<=0){cEl.textContent=L('يلا!','Go!');cEl.classList.add('go');tone(880,.25,'triangle',.12);AR.tStart=now;setTimeout(()=>{cEl.hidden=true;cEl.classList.remove('go');},450);}
     else{if(n!==prev||cEl.textContent==='')tone(440,.1,'triangle',.1);cEl.textContent=n;}
   }else if(AR.pause>0){AR.pause-=dt;if(AR.pause<=0)nextTarget(now);}
   else{
@@ -1257,13 +1295,13 @@ function updHud(){
   const h=$('#heat');
   let lbl,col;
   if(AR.count>0||AR.pause>0){lbl='';}
-  else if(AR.state==='view'){lbl=AR.t.view==='lat'?'غيّر لـ لاترل':'غيّر لـ AP';col='#56c2ac';}
-  else if(AR.state==='high'){lbl='نزّل الكاشف';col='#62b8e8';}
-  else if(AR.state==='lock'){lbl='ثبّت…';col='#62d391';}
-  else if(AR.heat>.78){lbl='حار جداً';col='#ff6e5e';}
-  else if(AR.heat>.5){lbl='حار';col='#f4b63f';}
-  else if(AR.heat>.25){lbl='دافي';col='#e9c46a';}
-  else{lbl='بارد';col='#62b8e8';}
+  else if(AR.state==='view'){lbl=AR.t.view==='lat'?L('غيّر لـ Lateral','Switch to Lateral'):L('غيّر لـ AP','Switch to AP');col='#56c2ac';}
+  else if(AR.state==='high'){lbl=L('نزّل الكاشف','Lower the detector');col='#62b8e8';}
+  else if(AR.state==='lock'){lbl=L('ثبّت…','Hold…');col='#62d391';}
+  else if(AR.heat>.78){lbl=L('حار جداً','Very hot');col='#ff6e5e';}
+  else if(AR.heat>.5){lbl=L('حار','Hot');col='#f4b63f';}
+  else if(AR.heat>.25){lbl=L('دافي','Warm');col='#e9c46a';}
+  else{lbl=L('بارد','Cold');col='#62b8e8';}
   h.hidden=!lbl;if(lbl){if(h.textContent!==lbl)h.textContent=lbl;h.style.color=col;h.style.borderColor=col;}
   monEl.style.boxShadow=lbl?`0 0 0 1px var(--line),0 0 ${Math.round(6+AR.heat*30)}px ${col}`:'';
 }
@@ -1287,9 +1325,9 @@ function arcadeMonitor(c,Sz,bf,mono){
   c.beginPath();c.moveTo(cx-k,cy);c.lineTo(cx-k*.4,cy);c.moveTo(cx+k*.4,cy);c.lineTo(cx+k,cy);c.moveTo(cx,cy-k);c.lineTo(cx,cy-k*.4);c.moveTo(cx,cy+k*.4);c.lineTo(cx,cy+k);c.stroke();
   if(AR.on&&AR.lock>0){c.strokeStyle='#62d391';c.lineWidth=Sz*.016;c.lineCap='round';c.beginPath();c.arc(cx,cy,R-Sz*.008,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,AR.lock));c.stroke();c.lineCap='butt';}
   if(S.hasImage&&S.region&&AR.t&&S.proj!=='lat'){const ok=AR.t.rg.includes(S.region);
-    c.textAlign='center';c.direction='rtl';c.font=`600 ${Sz*.036}px ${bf}`;
-    const w=c.measureText(S.region).width+Sz*.05;c.fillStyle='rgba(0,0,0,.55)';c.beginPath();c.roundRect?c.roundRect(cx-w/2,Sz*.905,w,Sz*.07,Sz*.035):c.rect(cx-w/2,Sz*.905,w,Sz*.07);c.fill();
-    c.fillStyle=ok?'#62d391':'#f4b63f';c.fillText(S.region,cx,Sz*.953);c.direction='ltr';}
+    c.textAlign='center';c.direction=cdir();c.font=`600 ${Sz*.036}px ${bf}`;
+    const w=c.measureText(nm(S.region)).width+Sz*.05;c.fillStyle='rgba(0,0,0,.55)';c.beginPath();c.roundRect?c.roundRect(cx-w/2,Sz*.905,w,Sz*.07,Sz*.035):c.rect(cx-w/2,Sz*.905,w,Sz*.07);c.fill();
+    c.fillStyle=ok?'#62d391':'#f4b63f';c.fillText(nm(S.region),cx,Sz*.953);c.direction='ltr';}
 }
 function arcadePad(c,X,Y,sx,sy,d){
   if(!AR.on||!AR.t||!AR.hint||AR.pause>0)return;const t=AR.t,ph=(performance.now()/600)%1;
@@ -1319,19 +1357,24 @@ function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
   if(AR.on)arcadeTick(dt,now);
   if(S.playing&&S.fluoro&&!AR.on){S.ft+=dt;S.dose+=doseRate()*dt;beamOn+=dt;acc+=dt;if(acc>=1/15){acc=0;renderLive();}
-    if(beamOn>10){fluoro(false);toast('انطفت الأشعة تلقائياً بعد 10 ثواني. شغّلها بس وقت تحتاج، عشان الجرعة.',5000);}}
+    if(beamOn>10){fluoro(false);toast(L('انطفت الأشعة تلقائياً بعد 10 ثواني. شغّلها بس وقت تحتاج، عشان الجرعة.','The beam turned off after 10 seconds. Only use it when you need it, to save dose.'),5000);}}
   if(S.collide>0)S.collide-=dt;$('#collide').hidden=!(S.collide>0);
   drawScene(now/1000);drawMonitor();drawPad();drawFx(dt);
   uiAcc+=dt;if(uiAcc>.1){uiAcc=0;
-    $('#vFT').textContent=S.ft.toFixed(1)+' ث';$('#vDose').textContent=S.dose.toFixed(2)+' mGy';
+    $('#vFT').textContent=S.ft.toFixed(1)+L(' ث',' s');$('#vDose').textContent=S.dose.toFixed(2)+' mGy';
     const el=S.playing?(now-S.t0)/1000:0;if(S.playing)$('#vTime').textContent=`${Math.floor(el/60)}:${String(Math.floor(el%60)).padStart(2,'0')}`;}
   requestAnimationFrame(frame);
 }
-syncUI();resize();$('#cards').innerHTML='<p style="color:var(--muted);grid-column:1/-1">جاري تحميل الهيكل العظمي…</p>';
+syncUI();resize();$('#cards').innerHTML=`<p style="color:var(--muted);grid-column:1/-1">${L('جاري تحميل الهيكل العظمي…','Loading the skeleton…')}</p>`;
+function setLang(l){LANG=l;try{localStorage.setItem('carm-lang',l);}catch(e){}applyLang();syncSnd();syncUI();renderMenuLB();
+  if(MODEL.ready){buildCards();$('#btnArcade').textContent=L('ابدأ التحدي','Start the challenge');}else $('#btnArcade').textContent=L('جاري التحميل…','Loading…');
+  $('#fluoroLbl').textContent=S.fluoro?L('إيقاف','Stop'):L('أشعة','X-ray');$('#fluoroSub').textContent=S.fluoro?L('الأشعة شغّالة','Beam on'):L('اضغط للتشغيل','Tap to start');}
+document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+setLang(LANG);
 renderMenuLB();
 loadModel().then(()=>{initGL();setupTasks();setupArcade();S.task=TASKS[2];syncUI();buildCards();renderXray($('#ref'),ideal(S.task),S.task,{});
-  const b=$('#btnArcade');b.disabled=false;b.textContent='ابدأ التحدي';})
-  .catch(e=>{console.error(e);$('#cards').innerHTML='<p style="color:var(--danger);grid-column:1/-1">تعذّر تحميل النموذج على هذا المتصفح. جرّب متصفح أحدث.</p>';});
+  const b=$('#btnArcade');b.disabled=false;b.textContent=L('ابدأ التحدي','Start the challenge');})
+  .catch(e=>{console.error(e);$('#cards').innerHTML=`<p style="color:var(--danger);grid-column:1/-1">${L('تعذّر تحميل النموذج على هذا المتصفح. جرّب متصفح أحدث.','The model could not load in this browser. Try a newer browser.')}</p>`;});
 requestAnimationFrame(frame);
 })();
 </script>
